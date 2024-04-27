@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 import csv
 from datetime import datetime, timedelta
+import os
 
 def getDataAndConvertToCSV(startDate, endDate, locationId):
     url = "https://dev-api.nextvue.io/api/starter/getAeratorUpByAerator"
@@ -22,6 +23,13 @@ def getDataAndConvertToCSV(startDate, endDate, locationId):
                     writer.writeheader()
                     writer.writerows(filtered_data)
                 st.write(f"Data for {formatStartDate} appended to {csvFileName}")
+                st.download_button(
+                    label="Download CSV",
+                    data=open(csvFileName, 'rb').read(),
+                    file_name=csvFileName,
+                    mime="text/csv"
+                )
+                os.remove(csvFileName)
 
         startDate += timedelta(days=1)
 
@@ -31,5 +39,5 @@ startDate = st.date_input("Start Date")
 endDate = st.date_input("End Date")
 locationId = st.text_input("Location ID")
 
-if st.button("Conver to CSV"):
+if st.button("Convert to CSV"):
     getDataAndConvertToCSV(startDate, endDate, locationId)
